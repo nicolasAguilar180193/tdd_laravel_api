@@ -25,7 +25,7 @@ class ListArticlesTest extends TestCase
         $response->assertExactJson([
             'data' => [
                 'type' => 'article',
-                'id' => $article->getRouteKey(),
+                'id' => (string) $article->getRouteKey(),
                 'attributes' => [
                     'title' => $article->title,
                     'slug' => $article->slug,
@@ -37,4 +37,58 @@ class ListArticlesTest extends TestCase
             ]
         ]);
     }
+
+    /** @test */
+    public function can_fetch_a_list_of_articles(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $articles = Article::factory()->count(3)->create();
+
+        $response = $this->getJson(route('api.v1.articles.index'));
+        
+        $response->assertExactJson([
+            'data' => [
+                [
+                    'type' => 'article',
+                    'id' => $articles[0]->getRouteKey(),
+                    'attributes' => [
+                        'title' => $articles[0]->title,
+                        'slug' => $articles[0]->slug,
+                        'content' => $articles[0]->content
+                    ],
+                    'links' => [
+                        'self' => url(route('api.v1.articles.show', $articles[0]))
+                        ]
+                    ],
+                [
+                    'type' => 'article',
+                    'id' => $articles[1]->getRouteKey(),
+                    'attributes' => [
+                        'slug' => $articles[1]->slug,
+                        'title' => $articles[1]->title,
+                        'content' => $articles[1]->content
+                    ],
+                    'links' => [
+                        'self' => url(route('api.v1.articles.show', $articles[1]))
+                    ]
+                ],
+                [
+                    'type' => 'article',
+                    'id' => $articles[2]->getRouteKey(),
+                    'attributes' => [
+                        'title' => $articles[2]->title,
+                        'slug' => $articles[2]->slug,
+                        'content' => $articles[2]->content
+                    ],
+                    'links' => [
+                        'self' => url(route('api.v1.articles.show', $articles[2]))
+                    ]
+                ]
+            ],
+            'links' => [
+                'self' => url(route('api.v1.articles.index'))
+            ]
+        ]);
+    }     
 }
