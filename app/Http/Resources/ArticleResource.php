@@ -15,7 +15,7 @@ class ArticleResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type' => 'article',
+            'type' => 'articles',
             'id' => $this->resource->getRouteKey(),
             'attributes' => [
                 'title' => $this->resource->title,
@@ -26,5 +26,12 @@ class ArticleResource extends JsonResource
                 'self' => url(route('api.v1.articles.show', $this->resource))
             ]
         ];
+    }
+
+    public function toResponse($request)
+    {
+        return parent::toResponse($request)->withHeaders([
+            'Location' => route('api.v1.articles.show', $this->resource)
+        ]);
     }
 }

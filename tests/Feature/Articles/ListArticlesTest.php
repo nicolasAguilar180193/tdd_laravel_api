@@ -24,7 +24,7 @@ class ListArticlesTest extends TestCase
 
         $response->assertExactJson([
             'data' => [
-                'type' => 'article',
+                'type' => 'articles',
                 'id' => (string) $article->getRouteKey(),
                 'attributes' => [
                     'title' => $article->title,
@@ -50,7 +50,7 @@ class ListArticlesTest extends TestCase
         $response->assertExactJson([
             'data' => [
                 [
-                    'type' => 'article',
+                    'type' => 'articles',
                     'id' => $articles[0]->getRouteKey(),
                     'attributes' => [
                         'title' => $articles[0]->title,
@@ -62,7 +62,7 @@ class ListArticlesTest extends TestCase
                         ]
                     ],
                 [
-                    'type' => 'article',
+                    'type' => 'articles',
                     'id' => $articles[1]->getRouteKey(),
                     'attributes' => [
                         'slug' => $articles[1]->slug,
@@ -74,7 +74,7 @@ class ListArticlesTest extends TestCase
                     ]
                 ],
                 [
-                    'type' => 'article',
+                    'type' => 'articles',
                     'id' => $articles[2]->getRouteKey(),
                     'attributes' => [
                         'title' => $articles[2]->title,
