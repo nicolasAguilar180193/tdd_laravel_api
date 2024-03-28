@@ -23,7 +23,7 @@ class CreateArticleTest extends TestCase
                     'content' => 'Some content',
                 ]
             ]
-                ]);
+        ]);
         
         $response->assertCreated();
 
