@@ -65,6 +65,8 @@ class Handler extends ExceptionHandler
 
         return response()->json([
             'errors' => $errors
-        ], 422);
+        ], 422, [
+            'Content-Type' => 'application/vnd.api+json'
+        ]);
     }
 }
