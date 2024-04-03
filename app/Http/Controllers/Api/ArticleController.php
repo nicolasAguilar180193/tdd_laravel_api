@@ -7,6 +7,7 @@ use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
@@ -20,7 +21,7 @@ class ArticleController extends Controller
         return ArticleCollection::make(Article::all());
     }
 
-    function store(Request $request)
+    function store(Request $request): ArticleResource
     {
         $request->validate([
             'data.attributes.title' => 'required|min:4',
@@ -37,7 +38,7 @@ class ArticleController extends Controller
         return ArticleResource::make($article);
     }
 
-    function update(Article $article, Request $request)
+    function update(Article $article, Request $request): ArticleResource
     {
         $request->validate([
             'data.attributes.title' => 'required|min:4',
@@ -52,5 +53,12 @@ class ArticleController extends Controller
         ]);
 
         return ArticleResource::make($article);
+    }
+
+    function destroy(Article $article): Response
+    {
+        $article->delete();
+
+        return response()->noContent();
     }
 }

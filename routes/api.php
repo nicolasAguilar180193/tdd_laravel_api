@@ -11,3 +11,5 @@ Route::get('/articles', [ArticleController::class, 'index'])->name('api.v1.artic
 Route::post('/articles', [ArticleController::class, 'store'])->name('api.v1.articles.store');
 
 Route::patch('/articles/{article}', [ArticleController::class, 'update'])->name('api.v1.articles.update');
+
+Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('api.v1.articles.destroy');
