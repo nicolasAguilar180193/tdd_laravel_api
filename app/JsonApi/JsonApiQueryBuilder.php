@@ -29,6 +29,22 @@ class JsonApiQueryBuilder
             return $this;
         };
 	}
+    
+    public function allowedFilters(): Closure
+    {
+        return function ($allowedFilters) {
+            /** @var Builder $this */
+            foreach(request('filter', []) as $filter => $value) {
+                abort_unless(in_array($filter, $allowedFilters), 400);
+                
+                $this->hasNamedScope($filter) 
+                    ? $this->{$filter}($value)
+                    : $this->where($filter, 'LIKE' , "%{$value}%");
+            }
+
+            return $this;
+        };
+    }
 
 	public function jsonPaginate(): Closure
 	{
@@ -39,7 +55,10 @@ class JsonApiQueryBuilder
                 $columns = ['*'], 
                 $pageName = 'page[number]', 
                 $page = request('page.number', 1)
-            )->appends(request()->only('page.size', 'sort'));
+            )->appends(request()->only('page.size', 'sort', 'filter'));
+        
+            return $this;
         };
 	}
+
 }

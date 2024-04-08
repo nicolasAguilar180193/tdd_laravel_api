@@ -19,9 +19,12 @@ class ArticleController extends Controller
 
     function index(): ArticleCollection
     {
-        $articles = Article::allowedSorts(['title','content']);
+        $articles = Article::query()
+            ->allowedFilters(['title','content','year','month'])
+            ->allowedSorts(['title','content'])
+            ->jsonPaginate();
 
-        return ArticleCollection::make($articles->jsonPaginate());
+        return ArticleCollection::make($articles);
     }
 
     function store(SaveArticleRequest $request): ArticleResource
