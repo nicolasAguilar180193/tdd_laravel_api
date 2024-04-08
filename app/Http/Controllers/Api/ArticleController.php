@@ -21,7 +21,7 @@ class ArticleController extends Controller
     {
         $articles = Article::allowedSorts(['title','content']);
 
-        return ArticleCollection::make($articles->get());
+        return ArticleCollection::make($articles->jsonPaginate());
     }
 
     function store(SaveArticleRequest $request): ArticleResource
