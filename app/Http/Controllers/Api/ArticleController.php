@@ -12,8 +12,11 @@ use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
-    function show(Article $article): ArticleResource
+    function show($article): ArticleResource
     {
+        $article = Article::where('slug', $article)
+            ->sparseFields()
+            ->firstOrFail();
         return ArticleResource::make($article);
     }
 
@@ -22,6 +25,7 @@ class ArticleController extends Controller
         $articles = Article::query()
             ->allowedFilters(['title','content','year','month'])
             ->allowedSorts(['title','content'])
+            ->sparseFields()
             ->jsonPaginate();
 
         return ArticleCollection::make($articles);
