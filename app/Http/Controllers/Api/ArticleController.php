@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\SaveArticleRequest;
-use App\Http\Resources\ArticleCollection;
-use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ArticleResource;
+use App\Http\Requests\SaveArticleRequest;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ArticleController extends Controller
 {
-    function show($article): ArticleResource
+    function show($article): JsonResource
     {
         $article = Article::where('slug', $article)
             ->sparseFields()
@@ -20,7 +20,7 @@ class ArticleController extends Controller
         return ArticleResource::make($article);
     }
 
-    function index(): ArticleCollection
+    function index(): AnonymousResourceCollection
     {
         $articles = Article::query()
             ->allowedFilters(['title','content','year','month'])
@@ -28,7 +28,7 @@ class ArticleController extends Controller
             ->sparseFields()
             ->jsonPaginate();
 
-        return ArticleCollection::make($articles);
+        return ArticleResource::collection($articles);
     }
 
     function store(SaveArticleRequest $request): ArticleResource
