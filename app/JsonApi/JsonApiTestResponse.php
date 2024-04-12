@@ -49,6 +49,8 @@ class JsonApiTestResponse
 			$this->assertHeader(
 				'Content-Type', 'application/vnd.api+json',
 			)->assertStatus(422);
+
+			return $this;
 		};
 	}
 
@@ -72,6 +74,8 @@ class JsonApiTestResponse
 				'Location',
 				route('api.v1.'.$model->getResourceType().'.show', $model)
 			);
+
+			return $this;
 		};
 	}
 
@@ -105,6 +109,8 @@ class JsonApiTestResponse
 					]
 				]);
 			}
+
+			return $this;
 		};
 	}
 }

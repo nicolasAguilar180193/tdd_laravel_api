@@ -27,10 +27,8 @@ class ListArticlesTest extends TestCase
     }
 
     /** @test */
-    public function can_fetch_a_list_of_articles(): void
+    public function can_fetch_all_articles(): void
     {
-        $this->withoutExceptionHandling();
-
         $articles = Article::factory()->count(3)->create();
 
         $response = $this->getJson(route('api.v1.articles.index'));
