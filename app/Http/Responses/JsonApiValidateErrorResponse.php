@@ -9,14 +9,14 @@ class JsonApiValidateErrorResponse extends JsonResponse
 {
 	public function __construct(ValidationException $exception, $status = 422)
 	{
-		$data = $this->formatJsonAPiErrors($exception);
+		$data = $this->formatJsonApiErrors($exception);
 		$headers = ['Content-Type' => 'application/vnd.api+json'];
 
 		parent::__construct($data, $status, $headers);
 	}
 
 
-	protected function formatJsonAPiErrors($exception)
+	protected function formatJsonApiErrors($exception)
 	{
 		$title = $exception->getMessage();
         $errors = [];

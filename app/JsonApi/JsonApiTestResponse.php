@@ -51,4 +51,60 @@ class JsonApiTestResponse
 			)->assertStatus(422);
 		};
 	}
+
+	public function assertJsonApiResource(): Closure
+	{
+		return function($model, $attributes) {
+			/** @var TestResponse $this */
+
+			$this->assertJson([
+				'data' => [
+					'type' => $model->getResourceType(),
+					'id' => (string) $model->getRouteKey(),
+					'attributes' => $attributes,
+					'links' => [
+						'self' => url(route('api.v1.'.$model->getResourceType().'.show', $model))
+					]
+				]
+			]);
+
+			$this->assertHeader(
+				'Location',
+				route('api.v1.'.$model->getResourceType().'.show', $model)
+			);
+		};
+	}
+
+	public function assertJsonApiResourceCollection(): Closure
+	{
+		return function($models, $attributesKeys) {
+			/** @var TestResponse $this */
+
+			try {
+				$this->assertJsonStructure([
+					'data' => [
+						'*' => [
+							'attributes' => $attributesKeys,
+						]
+					]
+				]);
+			} catch (ExpectationFailedException $e) {
+				PHPUnit::fail(
+					"Failed to find a valid JSON:API error response"
+					.PHP_EOL.PHP_EOL.
+					$e->getMessage()
+				);
+			}
+
+			foreach($models as $model) {
+				$this->assertJsonFragment([
+					'type' => $model->getResourceType(),
+					'id' => $model->getRouteKey(),
+					'links' => [
+						'self' => url(route('api.v1.'.$model->getResourceType().'.show', $model))
+					]
+				]);
+			}
+		};
+	}
 }
