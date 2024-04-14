@@ -31,7 +31,7 @@ class CreateArticleTest extends TestCase
 
         $article = Article::first();
 
-        $response->assertExactJson([
+        $response->assertJson([
             'data' => [
                 'type' => 'articles',
                 'id' => (string) $article->getRouteKey(),

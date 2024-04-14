@@ -22,8 +22,6 @@ class JsonApiTestResponse
 				$pointer = "/data/".str_replace('.', '/', $attribute)."/data/id";
 			}
 
-			dd($pointer);
-
 			try {
 				$this->assertJsonFragment([
 					'source' => ['pointer' => $pointer],
@@ -116,6 +114,27 @@ class JsonApiTestResponse
 				]);
 			}
 
+			return $this;
+		};
+	}
+
+	public function assertJsonApiRelationshipsLinks() : Closure {
+		return function ($model, $relations) {
+			/** @var TestResponse $this */
+			foreach($relations as $relation) {
+				$this->assertJson([
+					'data' => [
+						'relationships' => [
+							'category' => [
+								'links' => [
+									'self' => route("api.v1.{$model->getResourceType()}.relationships.{$relation}", $model),
+									'related' => route("api.v1.{$model->getResourceType()}.{$relation}", $model)
+								]
+							]
+						]
+					]
+				]);
+			}
 			return $this;
 		};
 	}

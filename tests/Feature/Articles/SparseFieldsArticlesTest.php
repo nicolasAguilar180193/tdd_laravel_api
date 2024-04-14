@@ -46,8 +46,6 @@ class SparseFieldsArticlesTest extends TestCase
             ]
         ]);
 
-        // dd(urldecode($url));
-
         $this->getJson($url)
             ->assertJsonFragment([
                 'title' => $article->title,
@@ -93,8 +91,6 @@ class SparseFieldsArticlesTest extends TestCase
                 'articles' => 'title',
             ]
         ]);
-
-        // dd(urldecode($url));
 
         $this->getJson($url)
             ->assertJsonFragment([
