@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Rules\Slug as SlugRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Whoops\Run;
 
 class SaveArticleRequest extends FormRequest
 {
@@ -33,7 +34,10 @@ class SaveArticleRequest extends FormRequest
                 Rule::unique('articles', 'slug')->ignore($this->route('article'))
             ],
             'data.attributes.content' => 'required',
-            'data.relationships' => ''
+            'data.relationships.category.data.id' => [
+                Rule::requiredIf(! $this->route('article')),
+                'exists:categories,slug'
+            ]
         ];
     }
 

@@ -14,10 +14,16 @@ class JsonApiTestResponse
 		return function ($attribute) {
 			/** @var TestResponse $this */
 			
-			$pointer = Str::of($attribute)->startsWith('data')
-				?  "/". str_replace('.', '/', $attribute)
-				: "/data/attributes/{$attribute}";
-			
+			$pointer = "/data/attributes/{$attribute}";
+
+			if(Str::of($attribute)->startsWith('data')) {
+				$pointer = "/".str_replace('.', '/', $attribute);
+			} elseif (Str::of($attribute)->startsWith('relationships')) {
+				$pointer = "/data/".str_replace('.', '/', $attribute)."/data/id";
+			}
+
+			dd($pointer);
+
 			try {
 				$this->assertJsonFragment([
 					'source' => ['pointer' => $pointer],
