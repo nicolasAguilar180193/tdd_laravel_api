@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Rules\Slug as SlugRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Whoops\Run;
 
 class SaveArticleRequest extends FormRequest
 {
