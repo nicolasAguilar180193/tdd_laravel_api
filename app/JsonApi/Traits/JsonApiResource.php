@@ -7,7 +7,7 @@ use App\JsonApi\Document;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-
+use Illuminate\Http\Resources\MissingValue;
 
 trait JsonApiResource
 {
@@ -16,15 +16,20 @@ trait JsonApiResource
     public function toArray(Request $request): array
     {
         if($request->filled('include')) {
-            $this->with['include'] = $this->getIncludes();
+            foreach($this->getIncludes() as $include) {
+                if($include->resource instanceof MissingValue) {
+                    continue;
+                }
+                $this->with['included'][] = $include;
+            }
         }
 
-        return Document::type($this->getResourceType())
+        return Document::type($this->resource->getResourceType())
             ->id($this->resource->getRouteKey())
             ->attributes($this->filterAttritutes($this->toJsonApi()))
             ->relationshipsLinks($this->getRelationshipsLinks())
             ->links([
-                'self' => route('api.v1.'.$this->getResourceType().'.show', $this->resource)
+                'self' => route('api.v1.'.$this->resource->getResourceType().'.show', $this->resource)
             ])->get('data');
     }
 
@@ -70,6 +75,9 @@ trait JsonApiResource
         if(request()->filled('include')) {
             foreach($resources as $resource) {
                 foreach($resource->getIncludes() as $include) {
+                    if($include->resource instanceof MissingValue) {
+                        continue;
+                    }
                     $collection->with['included'][] = $include;
                 }
             }

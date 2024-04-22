@@ -4,8 +4,8 @@ namespace Tests\Feature\Articles;
 
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Support\Facades\DB;
 
 class IncludeCategoryTest extends TestCase
 {
@@ -22,7 +22,7 @@ class IncludeCategoryTest extends TestCase
         ]);
 
         $this->getJson($url)->assertJson([
-            'include' => [
+            'included' => [
                 [
                     'type' => 'categories',
                     'id' => $article->category->getRouteKey(),
@@ -37,8 +37,8 @@ class IncludeCategoryTest extends TestCase
     /** @test */
     public function can_include_related_category_of_multiple_article(): void
     {
-        $article = Article::factory()->create();
-        $article2 = Article::factory()->create();
+        $article = Article::factory()->create()->load('category');
+        $article2 = Article::factory()->create()->load('category');
 
         $url = route('api.v1.articles.index', [
             'include' => 'category'
@@ -61,5 +61,26 @@ class IncludeCategoryTest extends TestCase
                 ]
             ]
         ]);
+    }
+
+    /** @test */
+    public function cannot_include_unknown_relationships(): void
+    {
+        $article = Article::factory()->create();
+
+        // articles/the-slug?include=unknown,unknown2
+        $url = route('api.v1.articles.show', [
+            'article' => $article,
+            'include' => 'unknown,unknown2'
+        ]);
+
+        $this->getJson($url)->assertStatus(400);
+
+        // articles?include=unknown,unknown2
+        $url = route('api.v1.articles.index', [
+            'include' => 'unknown,unknown2'
+        ]);
+
+        $this->getJson($url)->assertStatus(400);
     }
 }
