@@ -107,7 +107,7 @@ class JsonApiTestResponse
 			foreach($models as $model) {
 				$this->assertJsonFragment([
 					'type' => $model->getResourceType(),
-					'id' => $model->getRouteKey(),
+					'id' => (string) $model->getRouteKey(),
 					'links' => [
 						'self' => url(route('api.v1.'.$model->getResourceType().'.show', $model))
 					]
