@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Articles;
 
+use App\Models\User;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,6 +15,7 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function can_create_articles(): void
     {
+        $user = User::factory()->create();
         $category = Category::factory()->create();
 
         $response = $this->postJson(route('api.v1.articles.store'), [
@@ -21,7 +23,8 @@ class CreateArticleTest extends TestCase
             'slug' => 'new-article',
             'content' => 'Some content',
             '_relationships' => [
-                'category' => $category
+                'category' => $category,
+                'author' => $user
             ]
         ]);
         
@@ -46,6 +49,11 @@ class CreateArticleTest extends TestCase
             ]
         ]);
 
+        $this->assertDatabaseHas('articles', [
+           'title' => 'New Article',
+           'user_id' => $user->id,
+           'category_id' => $category->id
+        ]);
     }
 
     /** @test */
