@@ -4,7 +4,7 @@ namespace Tests\Feature\Authors;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ListAuthorsTest extends TestCase
@@ -17,6 +17,11 @@ class ListAuthorsTest extends TestCase
         $author = User::factory()->create();
 
         $response = $this->getJson(route('api.v1.authors.show', $author));
+
+        $this->assertTrue(
+            Str::isUuid($response->json('data.id')),
+            "The author's 'id' must be a UUID."
+        );
 
         $response->assertJsonApiResource($author, [
            'name' => $author->name 
