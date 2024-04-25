@@ -13,6 +13,13 @@ trait JsonApiResource
 {
 	abstract public function toJsonApi(): array;
 
+    public static function identifier($resource): Array
+    {
+        return Document::type($resource->getResourceType())
+            ->id($resource->getRouteKey())
+            ->toArray();
+    }
+
     public function toArray(Request $request): array
     {
         if($request->filled('include')) {
