@@ -63,7 +63,6 @@ class JsonApiQueryBuilder
                 $this->with($include);
             }
 
-
             return $this;
         };
     }
