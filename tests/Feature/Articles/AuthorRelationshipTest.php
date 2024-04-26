@@ -3,9 +3,12 @@
 namespace Tests\Feature\Articles;
 
 use App\Models\Article;
+use App\Models\Category;
+use App\Models\User;
+use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Support\Facades\DB;
 
 class AuthorRelationshipTest extends TestCase
 {
@@ -46,5 +49,58 @@ class AuthorRelationshipTest extends TestCase
                     ]
                 ]
             ]);
+    }
+
+    /** @test */
+    public function can_update_the_associated_author(): void
+    {
+        $article = Article::factory()->create();
+
+        $author = User::factory()->create();
+
+        $url = route('api.v1.articles.relationships.author', $article);
+
+        $this->withoutJsonApiDocumentFormatting();
+
+        $response = $this->patchJson($url, [
+            'data' => [
+                'type' => 'authors',
+                'id' => $author->getRouteKey()
+            ]
+        ]);
+
+        $response->assertExactJson([
+            'data' => [
+                'type' => 'authors',
+                'id' => $author->getRouteKey()
+            ]
+        ]);
+
+        $this->assertDatabaseHas('articles', [
+            'title' => $article->title,
+            'user_id' => $author->id
+        ]);
+    }
+
+    /** @test */
+    public function author_must_be_exist_in_databse(): void
+    {
+        $article = Article::factory()->create();
+
+        $url = route('api.v1.articles.relationships.author', $article);
+
+        $this->withoutJsonApiDocumentFormatting();
+
+        $this->patchJson($url, [
+            'data' => [
+                'type' => 'authors',
+                'id' => 'non-existing-author'
+            ]
+        ])->assertJsonApiValidationErrors('data.id');
+
+        $this->assertDatabaseHas('articles', [
+            'title' => $article->title,
+            'user_id' => $article->user_id
+        ]);
     }
 }
