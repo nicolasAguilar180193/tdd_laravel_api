@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
 
             return response()->json([
                 'errors' => [
-                    'title' => 'Not Found', 
+                    'title' => 'Not Found',
                     'detail' => "No records found for '{$id}' in the '{$type}' resource.", 
                     'status' => '404'
                 ]

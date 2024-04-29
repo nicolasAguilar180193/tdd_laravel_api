@@ -138,4 +138,23 @@ class JsonApiTestResponse
 			return $this;
 		};
 	}
+
+	public function assertJsonApiError() : Closure {
+		return function ($title = null, $detail = null, $status = null) {
+			/** @var TestResponse $this */
+			$this->assertJsonStructure([
+				'errors' => [
+					'*' => []
+				]
+			])->assertStatus((int) $status);
+
+			$title && $this->assertJsonFragment(['title' => $title]);
+
+			$detail && $this->assertJsonFragment(['detail' => $detail]);
+
+			$status && $this->assertJsonFragment(['status' => $status]);
+
+			return $this;
+		};
+	}
 }
