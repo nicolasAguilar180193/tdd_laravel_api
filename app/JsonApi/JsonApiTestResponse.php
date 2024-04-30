@@ -118,7 +118,8 @@ class JsonApiTestResponse
 		};
 	}
 
-	public function assertJsonApiRelationshipsLinks() : Closure {
+	public function assertJsonApiRelationshipsLinks() : Closure
+	{
 		return function ($model, $relations) {
 			/** @var TestResponse $this */
 			foreach($relations as $relation) {
@@ -139,22 +140,30 @@ class JsonApiTestResponse
 		};
 	}
 
-	public function assertJsonApiError() : Closure {
+	public function assertJsonApiError() : Closure
+	{
 		return function ($title = null, $detail = null, $status = null) {
-			/** @var TestResponse $this */
-			$this->assertJsonStructure([
-				'errors' => [
-					'*' => []
-				]
-			])->assertStatus((int) $status);
+            /** @var TestResponse $this */
+            try {
+                $this->assertJsonStructure([
+                    'errors' => [
+                        '*' => ['title', 'detail'],
+                    ],
+                ]);
+            } catch (ExpectationFailedException $e) {
+                PHPUnit::fail(
+                    'Error objects MUST be returned as an array keyed by errors in the top level of a JSON:API document'
+                    .PHP_EOL.PHP_EOL.
+                    $e->getMessage()
+                );
+            }
 
-			$title && $this->assertJsonFragment(['title' => $title]);
+            $title && $this->assertJsonFragment(['title' => $title]);
+            $detail && $this->assertJsonFragment(['detail' => $detail]);
+            $status && $this->assertStatus((int) $status)
+                ->assertJsonFragment(['status' => $status]);
 
-			$detail && $this->assertJsonFragment(['detail' => $detail]);
-
-			$status && $this->assertJsonFragment(['status' => $status]);
-
-			return $this;
+            return $this;
 		};
 	}
 }

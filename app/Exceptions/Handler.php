@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Http\Responses\JsonApiValidateErrorResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -44,17 +45,12 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->renderable(function (NotFoundHttpException $e, $request) {
-            $id = $request->input('data.id');
-            $type = $request->input('data.type');
+        $this->renderable(function (NotFoundHttpException $e) {
+            throw new JsonApi\NotFoundHttpException;
+        });
 
-            return response()->json([
-                'errors' => [
-                    'title' => 'Not Found',
-                    'detail' => "No records found for '{$id}' in the '{$type}' resource.", 
-                    'status' => '404'
-                ]
-            ], 404);
+        $this->renderable(function (BadRequestHttpException $e) {
+            throw new JsonApi\BadRequestHttpException($e->getMessage());
         });
     }
 

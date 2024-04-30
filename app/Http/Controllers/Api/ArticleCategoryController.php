@@ -22,7 +22,9 @@ class ArticleCategoryController extends Controller
 
     public function update(Article $article, Request $request)
     {
-        $request->validate(['data.id' => 'exists:categories,id']);
+        $request->validate([
+            'data.id' => ['exists:categories,slug'],
+        ]);
         
         $categorySlug = $request->input('data.id');
 

@@ -5,7 +5,6 @@ namespace Tests\Feature\Articles;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class FilterArticlesTest extends TestCase
@@ -97,8 +96,8 @@ class FilterArticlesTest extends TestCase
         ]);
 
         Article::factory()->create([
-            'title' => 'Article from month 2',
-            'created_at' => now()->month(2),
+            'title' => 'Article from month 1',
+            'created_at' => now()->month(1),
         ]);
 
         $url = route('api.v1.articles.index', [
@@ -111,7 +110,7 @@ class FilterArticlesTest extends TestCase
             ->assertJsonCount(2, 'data')
             ->assertSee('Article from month 3')
             ->assertSee('Another Article from month 3')
-            ->assertDontSee('Article from month 2');
+            ->assertDontSee('Article from month 1');
     }
 
     /** @test */
@@ -125,7 +124,11 @@ class FilterArticlesTest extends TestCase
             ]
         ]);
 
-        $this->getJson($url)->assertStatus(400);
+        $this->getJson($url)->assertJsonApiError(
+            title: 'Bad Request', 
+            detail: "The filter 'unknown' is not allowed in the 'articles' resource.", 
+            status: '400'
+        );
     }
 
     /** @test */

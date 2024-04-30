@@ -4,6 +4,7 @@ namespace App\JsonApi;
 
 use Closure;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class JsonApiQueryBuilder
 {
@@ -19,9 +20,13 @@ class JsonApiQueryBuilder
                     $sortDirection = Str::of($sortField)->startsWith('-') ? 'desc' : 'asc';
                     
                     $sortField = ltrim($sortField, '-');
-        
-                    abort_unless(in_array($sortField, $allowedSortFields), 400);
 
+                    if(! in_array($sortField, $allowedSortFields)) {
+                        throw new BadRequestHttpException(
+                            "The sort field '{$sortField}' is not allowed in the '{$this->getResourceType()}' resource."
+                        );
+                    }
+        
                     $this->orderBy($sortField, $sortDirection);
                 }
             }
@@ -35,7 +40,12 @@ class JsonApiQueryBuilder
         return function ($allowedFilters) {
             /** @var Builder $this */
             foreach(request('filter', []) as $filter => $value) {
-                abort_unless(in_array($filter, $allowedFilters), 400);
+
+                if(! in_array($filter, $allowedFilters)) {
+                    throw new BadRequestHttpException(
+                        "The filter '{$filter}' is not allowed in the '{$this->getResourceType()}' resource."
+                    );
+                }
                 
                 $this->hasNamedScope($filter) 
                     ? $this->{$filter}($value)
@@ -58,7 +68,11 @@ class JsonApiQueryBuilder
             $includes = explode(',', request()->input('include'));
 
             foreach($includes as $include) {
-                abort_unless(in_array($include, $allowedIncludes), 400);
+                if(! in_array($include, $allowedIncludes)) {
+                    throw new BadRequestHttpException(
+                        "The included relationship '{$include}' is not allowed in the '{$this->getResourceType()}' resource."
+                    );
+                }
                 
                 $this->with($include);
             }
