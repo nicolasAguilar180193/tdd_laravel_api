@@ -12,6 +12,12 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ArticleController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware('auth:sanctum')
+            ->only(['store', 'update', 'destroy']);
+    }
+
     function show($article): JsonResource
     {
         $article = Article::where('slug', $article)

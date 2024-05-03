@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class CreateArticleTest extends TestCase
@@ -13,10 +14,26 @@ class CreateArticleTest extends TestCase
     use RefreshDatabase;
     
     /** @test */
+    public function guest_cannot_create_articles(): void
+    {
+        $this->postJson(route('api.v1.articles.store'))
+            ->assertJsonApiError(
+                title: 'Unauthenticated',
+                detail: 'This action requires authentication.',
+                status: '401',
+            );
+
+        $this->assertDatabaseCount('articles', 0);
+    }
+
+    /** @test */
     public function can_create_articles(): void
     {
         $user = User::factory()->create();
+
         $category = Category::factory()->create();
+
+        Sanctum::actingAs($user);
 
         $response = $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
@@ -59,6 +76,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function title_is_required(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'slug' => 'new-article',
             'content' => 'Some content'
@@ -68,6 +87,8 @@ class CreateArticleTest extends TestCase
        /** @test */
     public function title_must_be_at_least_4_characters(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'Tit',
             'slug' => 'new-article',
@@ -78,6 +99,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function slug_is_required(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'content' => 'Some content',
@@ -87,6 +110,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function slug_must_be_unique(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $article = Article::factory()->create();
 
         $this->postJson(route('api.v1.articles.store'), [
@@ -99,6 +124,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function slug_must_only_contain_letters_numbers_dashes(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'slug' => '$%&^^%$#',
@@ -109,6 +136,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function slug_must_not_contain_underscore(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'slug' => 'new_article',
@@ -121,6 +150,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function slug_must_not_start_with_dashes(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'slug' => '-new-article',
@@ -134,6 +165,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function slug_must_not_end_with_dashes(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'slug' => 'new-article-',
@@ -146,6 +179,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function content_is_required(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'slug' => 'new-article',
@@ -155,6 +190,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function category_relationship_is_required(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'slug' => 'new-article',
@@ -165,6 +202,8 @@ class CreateArticleTest extends TestCase
     /** @test */
     public function category_must_be_exist_in_database(): void
     {
+        Sanctum::actingAs(User::factory()->create());
+
         $this->postJson(route('api.v1.articles.store'), [
             'title' => 'New Article',
             'slug' => 'new-article',
