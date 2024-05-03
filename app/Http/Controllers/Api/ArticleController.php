@@ -7,8 +7,10 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Requests\SaveArticleRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ArticleController extends Controller
 {
@@ -47,14 +49,18 @@ class ArticleController extends Controller
     }
 
     function update(Article $article, SaveArticleRequest $request): ArticleResource
-    {        
+    {
+        $this->authorize('update', $article);
+
         $article->update($request->validated());
 
         return ArticleResource::make($article);
     }
 
-    function destroy(Article $article): Response
+    function destroy(Article $article, Request $request): Response
     {
+        $this->authorize('delete', $article);
+        
         $article->delete();
 
         return response()->noContent();
