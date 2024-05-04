@@ -8,12 +8,14 @@ use Illuminate\Auth\Access\Response;
 
 class ArticlePolicy
 {
-    /**
-     * Determine whether the user can update the model.
-     */
+    public function create(User $user): bool
+    {
+        return $user->tokenCan('articles:create');
+    }
+    
     public function update(User $user, Article $article): bool
     {
-        return $user->is($article->author);
+        return $user->is($article->author) && $user->tokenCan('articles:update');
     }
 
     /**
@@ -21,6 +23,6 @@ class ArticlePolicy
      */
     public function delete(User $user, Article $article): bool
     {
-        return $user->is($article->author);
+        return $user->is($article->author) && $user->tokenCan('articles:delete');;
     }
 }
