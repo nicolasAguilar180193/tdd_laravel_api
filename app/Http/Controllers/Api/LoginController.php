@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\TokenResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ class LoginController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): TokenResponse
     {
         $request->validate([
             'email' => 'required|email',
@@ -28,14 +29,7 @@ class LoginController extends Controller
                 'email' => [__('auth.failed')],
             ]);
         }
-    
-        $plainTextToken = $user->createToken(
-            $request->device_name,
-            []
-        )->plainTextToken;
 
-        return response()->json([
-            'plain-text-token' => $plainTextToken
-        ]);
+        return new TokenResponse($user);
     }
 }
