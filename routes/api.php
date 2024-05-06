@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\LogoutController;
 use App\Http\Middleware\ValidateJsonApiDocument;
 
 Route::apiResource('articles', ArticleController::class);
@@ -43,5 +44,9 @@ Route::get('articles/{article}/author', [
 ])->name('articles.author');
 
 Route::withoutMiddleware(ValidateJsonApiDocument::class)
-	->post('loging', LoginController::class)
+	->post('login', LoginController::class)
 	->name('login');
+
+Route::withoutMiddleware(ValidateJsonApiDocument::class)
+	->post('logout', LogoutController::class)
+	->name('logout');

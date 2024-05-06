@@ -11,6 +11,10 @@ use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
+    public function __construct() {
+        $this->middleware('guest:sanctum');
+    }
+
     /**
      * Handle the incoming request.
      */
