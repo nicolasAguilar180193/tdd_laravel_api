@@ -12,11 +12,16 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutJsonApiDocumentFormatting();
+    }
+
     /** @test */
     public function can_issue_access_token(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $user = User::factory()->create();
 
         $data = $this->validCredentials([
@@ -49,8 +54,6 @@ class LoginTest extends TestCase
     /** @test */
     public function user_permissions_are_assingned_as_abilities_to_the_token(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $user = User::factory()->create();
 
         $permission1 = Permission::factory()->create();
@@ -78,8 +81,6 @@ class LoginTest extends TestCase
     /** @test */
     public function password_must_be_valid(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $user = User::factory()->create();
 
         $data = $this->validCredentials([
@@ -95,8 +96,6 @@ class LoginTest extends TestCase
     /** @test */
     public function email_must_be_registered(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $data = $this->validCredentials();
 
         $response = $this->postJson(route('api.v1.login'), $data);
@@ -107,8 +106,6 @@ class LoginTest extends TestCase
     /** @test */
     public function email_is_required(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $data = $this->validCredentials(['email' => null]);
 
         $response = $this->postJson(route('api.v1.login'), $data);
@@ -119,8 +116,6 @@ class LoginTest extends TestCase
     /** @test */
     public function email_must_be_valid(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $data = $this->validCredentials(['email' => 'invalid-email']);
 
         $response = $this->postJson(route('api.v1.login'), $data);
@@ -131,8 +126,6 @@ class LoginTest extends TestCase
     /** @test */
     public function password_is_required(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $data = $this->validCredentials(['password' => null]);
 
         $response = $this->postJson(route('api.v1.login'), $data);
@@ -143,8 +136,6 @@ class LoginTest extends TestCase
     /** @test */
     public function device_name_is_required(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
-
         $data = $this->validCredentials(['device_name' => null]);
 
         $response = $this->postJson(route('api.v1.login'), $data);
