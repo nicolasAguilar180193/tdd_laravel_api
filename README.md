@@ -2,5 +2,5 @@
 
 <p align="center">
 <!-- <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a> -->
-<a href="https://github.com/nicolasAguilar180193/tdd_laravel_api/actions/"><img src="https://github.com/nicolasAguilar180193/tdd_laravel_api/workflows/test/badge.svg" alt="Build Status"></a>
+<a href="https://github.com/nicolasAguilar180193/tdd_laravel_api/actions/"><img src="https://github.com/nicolasAguilar180193/tdd_laravel_api/actions/workflows/test/badge.svg" alt="Build Status"></a>
 </p>
