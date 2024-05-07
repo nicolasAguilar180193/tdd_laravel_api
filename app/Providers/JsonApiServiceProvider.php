@@ -3,12 +3,12 @@
 namespace App\Providers;
 
 use App\JsonApi\JsonApiQueryBuilder;
+use App\JsonApi\JsonApiRequest;
 use App\JsonApi\JsonApiTestResponse;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Testing\TestResponse;
-
+use Illuminate\Foundation\Http\FormRequest;
 
 class JsonApiServiceProvider extends ServiceProvider
 {
@@ -29,13 +29,6 @@ class JsonApiServiceProvider extends ServiceProvider
 
         TestResponse::mixin(new JsonApiTestResponse());
 
-        Request::macro('isJsonApi', function() {
-            /** @var Request $this */
-            if($this->header('accept') === 'application/vnd.api+json') {
-                return true;
-            }
-
-            return $this->header('content-type') === 'application/vnd.api+json';
-        });
+        FormRequest::mixin(new JsonApiRequest());
     }
 }

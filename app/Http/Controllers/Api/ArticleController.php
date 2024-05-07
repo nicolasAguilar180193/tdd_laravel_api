@@ -7,14 +7,14 @@ use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Requests\SaveArticleRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
 
 class ArticleController extends Controller
 {
-
     public function __construct() {
         $this->middleware('auth:sanctum')
             ->only(['store', 'update', 'destroy']);
@@ -45,7 +45,17 @@ class ArticleController extends Controller
     {
         $this->authorize('create', new Article);
 
-        $article = Article::create($request->validated());
+        $articleData = $request->getAttributes();
+
+        $articleData['user_id'] = $request->getRelationshipId('author');
+
+        $categorySlug = $request->getRelationshipId('category');
+
+        $category = Category::whereSlug($categorySlug)->first();
+
+        $articleData['category_id'] = $category->id;
+
+        $article = Article::create($articleData);
         
         return ArticleResource::make($article);
     }
@@ -54,7 +64,21 @@ class ArticleController extends Controller
     {
         $this->authorize('update', $article);
 
-        $article->update($request->validated());
+        $articleData = $request->getAttributes();
+
+        if($request->hasRelationship('author')) {
+            $articleData['user_id'] = $request->getRelationshipId('author');
+        }
+
+        if($request->hasRelationship('category')) {
+            $categorySlug = $request->getRelationshipId('category');
+
+            $category = Category::whereSlug($categorySlug)->first();
+            
+            $articleData['category_id'] = $category->id;
+        }
+
+        $article->update($articleData);
 
         return ArticleResource::make($article);
     }
