@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\Permission;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Permission;
+use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LoginTest extends TestCase
 {
@@ -25,7 +25,7 @@ class LoginTest extends TestCase
         $user = User::factory()->create();
 
         $data = $this->validCredentials([
-            'email' => $user->email
+            'email' => $user->email,
         ]);
 
         $response = $this->postJson(route('api.v1.login'), $data);
@@ -44,7 +44,7 @@ class LoginTest extends TestCase
 
         $accessToken = $user->createToken($user->name)->plainTextToken;
 
-        $this->withHeader('Authorization', 'Bearer '. $accessToken)
+        $this->withHeader('Authorization', 'Bearer '.$accessToken)
             ->postJson(route('api.v1.login'))
             ->assertNoContent();
 
@@ -61,10 +61,10 @@ class LoginTest extends TestCase
         $permission3 = Permission::factory()->create();
 
         $user->givePermissionTo($permission1);
-        $user->givePermissionTo($permission2);        
+        $user->givePermissionTo($permission2);
 
         $data = $this->validCredentials([
-            'email' => $user->email
+            'email' => $user->email,
         ]);
 
         $response = $this->postJson(route('api.v1.login'), $data);
@@ -85,7 +85,7 @@ class LoginTest extends TestCase
 
         $data = $this->validCredentials([
             'email' => $user->email,
-            'password' => 'incorrect'
+            'password' => 'incorrect',
         ]);
 
         $response = $this->postJson(route('api.v1.login'), $data);
@@ -148,7 +148,7 @@ class LoginTest extends TestCase
         return array_merge([
             'email' => 'nicolas@example.com',
             'password' => 'password',
-            'device_name' => 'My device'
+            'device_name' => 'My device',
         ], $overrides);
     }
 }

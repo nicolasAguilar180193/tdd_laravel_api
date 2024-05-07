@@ -7,32 +7,30 @@ use Illuminate\Validation\ValidationException;
 
 class JsonApiValidateErrorResponse extends JsonResponse
 {
-	public function __construct(ValidationException $exception, $status = 422)
-	{
-		$data = $this->formatJsonApiErrors($exception);
-		$headers = ['Content-Type' => 'application/vnd.api+json'];
+    public function __construct(ValidationException $exception, $status = 422)
+    {
+        $data = $this->formatJsonApiErrors($exception);
+        $headers = ['Content-Type' => 'application/vnd.api+json'];
 
-		parent::__construct($data, $status, $headers);
-	}
+        parent::__construct($data, $status, $headers);
+    }
 
-
-	protected function formatJsonApiErrors($exception)
-	{
-		$title = $exception->getMessage();
+    protected function formatJsonApiErrors($exception)
+    {
+        $title = $exception->getMessage();
         $errors = [];
-        
+
         foreach ($exception->errors() as $field => $messages) {
 
-            $errors[] =  [
+            $errors[] = [
                 'title' => $title,
                 'detail' => $messages[0],
                 'source' => [
-                    'pointer' => '/' . str_replace('.', '/', $field),
-                ]
+                    'pointer' => '/'.str_replace('.', '/', $field),
+                ],
             ];
         }
 
-		return ['errors' => $errors];
-	}
-
+        return ['errors' => $errors];
+    }
 }

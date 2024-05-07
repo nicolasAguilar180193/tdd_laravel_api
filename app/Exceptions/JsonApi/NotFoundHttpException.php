@@ -20,10 +20,10 @@ class NotFoundHttpException extends Exception
             'errors' => [
                 [
                     'title' => 'Not Found',
-                    'detail' => "No records found for '{$id}' in the '{$type}' resource.", 
-                    'status' => '404'
-                ]
-            ]
+                    'detail' => "No records found for '{$id}' in the '{$type}' resource.",
+                    'status' => '404',
+                ],
+            ],
         ], 404);
     }
 }

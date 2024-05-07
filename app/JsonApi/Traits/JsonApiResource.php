@@ -5,14 +5,14 @@ namespace App\JsonApi\Traits;
 use App\JsonApi\Document;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\MissingValue;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 trait JsonApiResource
 {
-	abstract public function toJsonApi(): array;
+    abstract public function toJsonApi(): array;
 
-    public static function identifier($resource): Array
+    public static function identifier($resource): array
     {
         return Document::type($resource->getResourceType())
             ->id($resource->getRouteKey())
@@ -21,9 +21,9 @@ trait JsonApiResource
 
     public function toArray(Request $request): array
     {
-        if($request->filled('include')) {
-            foreach($this->getIncludes() as $include) {
-                if($include->resource instanceof MissingValue) {
+        if ($request->filled('include')) {
+            foreach ($this->getIncludes() as $include) {
+                if ($include->resource instanceof MissingValue) {
                     continue;
                 }
                 $this->with['included'][] = $include;
@@ -35,7 +35,7 @@ trait JsonApiResource
             ->attributes($this->filterAttritutes($this->toJsonApi()))
             ->relationshipsLinks($this->getRelationshipsLinks())
             ->links([
-                'self' => route('api.v1.'.$this->resource->getResourceType().'.show', $this->resource)
+                'self' => route('api.v1.'.$this->resource->getResourceType().'.show', $this->resource),
             ])->get('data');
     }
 
@@ -60,13 +60,13 @@ trait JsonApiResource
     public function filterAttritutes(array $attributes): array
     {
         return array_filter($attributes, function ($value) {
-            if(request()->isNotFilled('fields')) {
+            if (request()->isNotFilled('fields')) {
                 return true;
             }
 
             $fields = explode(',', request('fields.'.$this->resource->getResourceType()));
 
-            if($value === $this->getRouteKey()) {
+            if ($value === $this->getRouteKey()) {
                 return in_array($this->getRouteKeyName(), $fields);
             }
 
@@ -74,14 +74,14 @@ trait JsonApiResource
         });
     }
 
-	public static function collection($resources): AnonymousResourceCollection
+    public static function collection($resources): AnonymousResourceCollection
     {
         $collection = parent::collection($resources);
 
-        if(request()->filled('include')) {
-            foreach($resources as $resource) {
-                foreach($resource->getIncludes() as $include) {
-                    if($include->resource instanceof MissingValue) {
+        if (request()->filled('include')) {
+            foreach ($resources as $resource) {
+                foreach ($resource->getIncludes() as $include) {
+                    if ($include->resource instanceof MissingValue) {
                         continue;
                     }
                     $collection->with['included'][] = $include;

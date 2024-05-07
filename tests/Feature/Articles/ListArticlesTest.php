@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class ListArticlesTest extends TestCase
 {
@@ -16,13 +16,13 @@ class ListArticlesTest extends TestCase
         $article = Article::factory()->create();
 
         $response = $this->getJson(route('api.v1.articles.show', $article));
-        
+
         $response->assertSuccessful();
 
         $response->assertJsonApiResource($article, [
             'title' => $article->title,
             'slug' => $article->slug,
-            'content' => $article->content
+            'content' => $article->content,
         ])->assertJsonApiRelationshipsLinks($article, ['author', 'category']);
     }
 
@@ -32,9 +32,9 @@ class ListArticlesTest extends TestCase
         $articles = Article::factory()->count(3)->create();
 
         $response = $this->getJson(route('api.v1.articles.index'));
-        
+
         $response->assertJsonApiResourceCollection($articles, [
-            'title', 'slug', 'content'
+            'title', 'slug', 'content',
         ]);
     }
 
@@ -43,9 +43,9 @@ class ListArticlesTest extends TestCase
     {
         $this->getJson(route('api.v1.articles.show', 'non-existing'))
             ->assertJsonApiError(
-                title: 'Not Found', 
-				detail: "No records found for 'non-existing' in the 'articles' resource.", 
-				status: '404'
+                title: 'Not Found',
+                detail: "No records found for 'non-existing' in the 'articles' resource.",
+                status: '404'
             );
     }
 }

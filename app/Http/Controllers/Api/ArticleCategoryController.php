@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoryResource;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryResource;
 
 class ArticleCategoryController extends Controller
 {
-    public function index(Article $article): Array
+    public function index(Article $article): array
     {
         return CategoryResource::identifier($article->category);
     }
@@ -25,7 +25,7 @@ class ArticleCategoryController extends Controller
         $request->validate([
             'data.id' => ['exists:categories,slug'],
         ]);
-        
+
         $categorySlug = $request->input('data.id');
 
         $category = Category::where('slug', $categorySlug)->first();

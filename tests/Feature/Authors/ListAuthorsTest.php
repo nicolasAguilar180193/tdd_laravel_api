@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Authors;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
 use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ListAuthorsTest extends TestCase
 {
@@ -24,7 +24,7 @@ class ListAuthorsTest extends TestCase
         );
 
         $response->assertJsonApiResource($author, [
-           'name' => $author->name 
+            'name' => $author->name,
         ]);
     }
 
@@ -34,9 +34,9 @@ class ListAuthorsTest extends TestCase
         $authors = User::factory()->count(3)->create();
 
         $response = $this->getJson(route('api.v1.authors.index'));
-        
+
         $response->assertJsonApiResourceCollection($authors, [
-            'name'
+            'name',
         ]);
-    }  
+    }
 }

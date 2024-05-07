@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Categories;
 
+use Tests\TestCase;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class ListCategoriesTest extends TestCase
 {
@@ -18,8 +17,8 @@ class ListCategoriesTest extends TestCase
 
         $this->getJson(route('api.v1.categories.show', $category))
             ->assertJsonApiResource($category, [
-           'name' => $category->name 
-        ]);
+                'name' => $category->name,
+            ]);
     }
 
     /** @test */
@@ -28,9 +27,9 @@ class ListCategoriesTest extends TestCase
         $category = Category::factory()->count(3)->create();
 
         $response = $this->getJson(route('api.v1.categories.index'));
-        
+
         $response->assertJsonApiResourceCollection($category, [
-            'name'
+            'name',
         ]);
-    }  
+    }
 }

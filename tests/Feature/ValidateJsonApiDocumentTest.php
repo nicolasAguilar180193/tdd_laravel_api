@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use Tests\TestCase;
+use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\ValidateJsonApiDocument;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
-use Tests\TestCase;
 
 class ValidateJsonApiDocumentTest extends TestCase
 {
@@ -47,13 +47,13 @@ class ValidateJsonApiDocumentTest extends TestCase
         $this->postJson('/json-api', [
             'data' => [
                 'attributes' => ['title' => 'title'],
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.type');
 
         $this->patchJson('/json-api', [
             'data' => [
                 'attributes' => ['title' => 'title'],
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.type');
     }
 
@@ -64,14 +64,14 @@ class ValidateJsonApiDocumentTest extends TestCase
             'data' => [
                 'type' => 1,
                 'attributes' => ['title' => 'title'],
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.type');
 
         $this->patchJson('/json-api', [
             'data' => [
                 'type' => 1,
                 'attributes' => ['title' => 'title'],
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.type');
     }
 
@@ -81,13 +81,13 @@ class ValidateJsonApiDocumentTest extends TestCase
         $this->postJson('/json-api', [
             'data' => [
                 'type' => 'articles',
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.attributes');
 
         $this->patchJson('/json-api', [
             'data' => [
                 'type' => 'articles',
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.attributes');
     }
 
@@ -98,14 +98,14 @@ class ValidateJsonApiDocumentTest extends TestCase
             'data' => [
                 'type' => 'articles',
                 'attributes' => 'attributes',
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.attributes');
 
         $this->patchJson('/json-api', [
             'data' => [
                 'type' => 'articles',
                 'attributes' => 'attributes',
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.attributes');
     }
 
@@ -116,7 +116,7 @@ class ValidateJsonApiDocumentTest extends TestCase
             'data' => [
                 'type' => 'articles',
                 'attributes' => ['title' => 'title'],
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.id');
     }
 
@@ -128,7 +128,7 @@ class ValidateJsonApiDocumentTest extends TestCase
                 'type' => 'articles',
                 'attributes' => ['title' => 'title'],
                 'id' => 1,
-            ]
+            ],
         ])->assertJsonApiValidationErrors('data.id');
     }
 
@@ -139,19 +139,19 @@ class ValidateJsonApiDocumentTest extends TestCase
             'data' => [
                 'type' => 'articles',
                 'attributes' => [
-                    'title' => 'title'
+                    'title' => 'title',
                 ],
-            ]
+            ],
         ])->assertSuccessful();
-        
+
         $this->postJson('/json-api', [
             'data' => [
                 'type' => 'articles',
                 'id' => 1,
                 'attributes' => [
-                    'title' => 'title'
+                    'title' => 'title',
                 ],
-            ]
+            ],
         ])->assertSuccessful();
     }
 }

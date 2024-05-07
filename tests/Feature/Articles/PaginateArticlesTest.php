@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class PaginateArticlesTest extends TestCase
 {
@@ -19,25 +18,25 @@ class PaginateArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'page' => [
                 'size' => 2,
-                'number' => 2
-            ]
+                'number' => 2,
+            ],
         ]);
 
         $response = $this->getJson($url)
             ->assertSee([
                 $articles[2]->title,
-                $articles[3]->title
+                $articles[3]->title,
             ]);
 
         $response->assertDontSee([
             $articles[0]->title,
             $articles[1]->title,
             $articles[4]->title,
-            $articles[5]->title
+            $articles[5]->title,
         ]);
 
         $response->assertJsonStructure([
-            'links' => ['first', 'last', 'prev', 'next']
+            'links' => ['first', 'last', 'prev', 'next'],
         ]);
 
         $firstLink = urldecode($response->json('links.first'));
@@ -50,10 +49,10 @@ class PaginateArticlesTest extends TestCase
 
         $this->assertStringContainsString('page[size]=2', $lastLink);
         $this->assertStringContainsString('page[number]=3', $lastLink);
-        
+
         $this->assertStringContainsString('page[size]=2', $prevLink);
         $this->assertStringContainsString('page[number]=1', $prevLink);
-        
+
         $this->assertStringContainsString('page[size]=2', $nextLink);
         $this->assertStringContainsString('page[number]=3', $nextLink);
     }
@@ -62,23 +61,23 @@ class PaginateArticlesTest extends TestCase
     public function can_paginate_sorted_articles(): void
     {
         Article::factory()->create([
-            'title' => 'C Title'
+            'title' => 'C Title',
         ]);
 
         Article::factory()->create([
-            'title' => 'A Title'
+            'title' => 'A Title',
         ]);
 
         Article::factory()->create([
-            'title' => 'B Title'
+            'title' => 'B Title',
         ]);
 
         $url = route('api.v1.articles.index', [
             'sort' => 'title',
             'page' => [
                 'size' => 1,
-                'number' => 2
-            ]
+                'number' => 2,
+            ],
         ]);
 
         $response = $this->getJson($url)
@@ -108,23 +107,23 @@ class PaginateArticlesTest extends TestCase
         Article::factory()->count(3)->create();
 
         Article::factory()->create([
-            'title' => 'C Laravel'
+            'title' => 'C Laravel',
         ]);
 
         Article::factory()->create([
-            'title' => 'A Laravel'
+            'title' => 'A Laravel',
         ]);
 
         Article::factory()->create([
-            'title' => 'B Laravel'
+            'title' => 'B Laravel',
         ]);
 
         $url = route('api.v1.articles.index', [
             'filter[title]' => 'laravel',
             'page' => [
                 'size' => 1,
-                'number' => 2
-            ]
+                'number' => 2,
+            ],
         ]);
 
         $response = $this->getJson($url);

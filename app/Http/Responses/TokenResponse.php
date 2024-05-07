@@ -7,17 +7,19 @@ use Illuminate\Contracts\Support\Responsable;
 
 class TokenResponse implements Responsable
 {
-	public function __construct(public User $user) {}
+    public function __construct(public User $user)
+    {
+    }
 
-	public function toResponse($request)
-	{
-		$plainTextToken = $this->user->createToken(
+    public function toResponse($request)
+    {
+        $plainTextToken = $this->user->createToken(
             $request->device_name,
             $this->user->permissions->pluck('name')->toArray()
         )->plainTextToken;
 
         return response()->json([
-            'plain-text-token' => $plainTextToken
+            'plain-text-token' => $plainTextToken,
         ]);
-	}
+    }
 }

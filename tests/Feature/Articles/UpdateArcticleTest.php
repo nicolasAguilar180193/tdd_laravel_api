@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
+use App\Models\User;
 use App\Models\Article;
 use App\Models\Category;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UpdateArcticleTest extends TestCase
 {
@@ -23,13 +23,13 @@ class UpdateArcticleTest extends TestCase
         $response = $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'Updated Article',
             'slug' => $article->slug,
-            'content' => 'Updated content'
+            'content' => 'Updated content',
         ])->assertOk();
 
         $response->assertJsonApiResource($article, [
             'title' => 'Updated Article',
             'slug' => $article->slug,
-            'content' => 'Updated content'
+            'content' => 'Updated content',
         ]);
     }
 
@@ -47,19 +47,19 @@ class UpdateArcticleTest extends TestCase
             'slug' => $article->slug,
             'content' => 'Updated content',
             '_relationships' => [
-                'category' => $category
-            ]
+                'category' => $category,
+            ],
         ])->assertOk();
 
         $response->assertJsonApiResource($article, [
             'title' => 'Updated Article',
             'slug' => $article->slug,
-            'content' => 'Updated content'
+            'content' => 'Updated content',
         ]);
 
         $this->assertDatabaseHas('articles', [
             'title' => 'Updated Article',
-            'category_id' => $category->id
+            'category_id' => $category->id,
         ]);
     }
 
@@ -73,7 +73,7 @@ class UpdateArcticleTest extends TestCase
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'Updated Article',
             'slug' => $article->slug,
-            'content' => 'Updated content'
+            'content' => 'Updated content',
         ])->assertForbidden();
     }
 
@@ -99,17 +99,17 @@ class UpdateArcticleTest extends TestCase
 
         $this->patchJson(route('api.v1.articles.update', $article), [
             'slug' => 'updated-article',
-            'content' => 'Updated content'
+            'content' => 'Updated content',
         ])->assertJsonApiValidationErrors('title');
     }
 
-        /** @test */
+    /** @test */
     public function title_must_be_at_least_4_characters(): void
     {
         $article = Article::factory()->create();
 
         Sanctum::actingAs($article->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'Tit',
             'slug' => 'updated-article',
@@ -123,7 +123,7 @@ class UpdateArcticleTest extends TestCase
         $article = Article::factory()->create();
 
         Sanctum::actingAs($article->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'Updated Article',
             'content' => 'Updated content',
@@ -137,7 +137,7 @@ class UpdateArcticleTest extends TestCase
         $article2 = Article::factory()->create();
 
         Sanctum::actingAs($article1->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article1), [
             'title' => 'New Article',
             'slug' => $article2->slug,
@@ -151,7 +151,7 @@ class UpdateArcticleTest extends TestCase
         $article = Article::factory()->create();
 
         Sanctum::actingAs($article->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'New Article',
             'slug' => '$%&^^%$#',
@@ -165,13 +165,13 @@ class UpdateArcticleTest extends TestCase
         $article = Article::factory()->create();
 
         Sanctum::actingAs($article->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'New Article',
             'slug' => 'new_article',
             'content' => 'Some content',
         ])->assertSee(__('validation.no_underscores', [
-            'attribute' => 'data.attributes.slug'
+            'attribute' => 'data.attributes.slug',
         ]))->assertJsonApiValidationErrors('slug');
     }
 
@@ -181,13 +181,13 @@ class UpdateArcticleTest extends TestCase
         $article = Article::factory()->create();
 
         Sanctum::actingAs($article->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'New Article',
             'slug' => '-new-article',
             'content' => 'Some content',
         ])->assertSee(__('validation.no_starting_dashes', [
-            'attribute' => 'data.attributes.slug'
+            'attribute' => 'data.attributes.slug',
         ]))->assertJsonApiValidationErrors('slug');
     }
 
@@ -197,13 +197,13 @@ class UpdateArcticleTest extends TestCase
         $article = Article::factory()->create();
 
         Sanctum::actingAs($article->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'New Article',
             'slug' => 'new-article-',
             'content' => 'Some content',
         ])->assertSee(__('validation.no_ending_dashes', [
-            'attribute' => 'data.attributes.slug'
+            'attribute' => 'data.attributes.slug',
         ]))->assertJsonApiValidationErrors('slug');
     }
 
@@ -213,7 +213,7 @@ class UpdateArcticleTest extends TestCase
         $article = Article::factory()->create();
 
         Sanctum::actingAs($article->author);
-        
+
         $this->patchJson(route('api.v1.articles.update', $article), [
             'title' => 'Updated Article',
             'slug' => 'updated-article',

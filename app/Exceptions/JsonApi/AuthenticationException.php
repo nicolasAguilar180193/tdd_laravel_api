@@ -3,8 +3,8 @@
 namespace App\Exceptions\JsonApi;
 
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class AuthenticationException extends Exception
 {
@@ -18,9 +18,9 @@ class AuthenticationException extends Exception
                 [
                     'title' => 'Unauthenticated',
                     'detail' => 'This action requires authentication.',
-                    'status' => '401'
-                ]
-            ]
+                    'status' => '401',
+                ],
+            ],
         ], 401);
     }
 }

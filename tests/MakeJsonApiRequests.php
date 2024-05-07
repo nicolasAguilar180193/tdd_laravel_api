@@ -3,8 +3,8 @@
 namespace Tests;
 
 use App\JsonApi\Document;
-use Illuminate\Testing\TestResponse;
 use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
 
 trait MakeJsonApiRequests
 {
@@ -39,7 +39,7 @@ trait MakeJsonApiRequests
         $path = parse_url($uri)['path'];
         $type = (string) Str::of($path)->after('/api/v1/')->before('/');
         $id = (string) Str::of($path)->after($type)->replace('/', '');
-        
+
         return Document::type($type)
             ->id($id)
             ->attributes($data)
@@ -47,9 +47,9 @@ trait MakeJsonApiRequests
             ->toArray();
     }
 
-	public function json($method, $uri, array $data = [], array $headers = [], $options = 0): TestResponse
-    {        
-        if($this->addJsonApiHeaders) {
+    public function json($method, $uri, array $data = [], array $headers = [], $options = 0): TestResponse
+    {
+        if ($this->addJsonApiHeaders) {
             $headers['Accept'] = 'application/vnd.api+json';
 
             if ($method === 'POST' || $method === 'PATCH') {
@@ -57,9 +57,9 @@ trait MakeJsonApiRequests
             }
         }
 
-        if($this->formatJsonApiDocument) {
-            
-            if(! isset($data['data']) ) {
+        if ($this->formatJsonApiDocument) {
+
+            if (! isset($data['data'])) {
                 $formattedData = $this->getFormattedData($uri, $data);
             }
         }

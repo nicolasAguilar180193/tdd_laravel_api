@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class FilterArticlesTest extends TestCase
 {
@@ -25,7 +25,7 @@ class FilterArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'filter' => [
                 'title' => 'Laravel',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -48,7 +48,7 @@ class FilterArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'filter' => [
                 'content' => 'Laravel',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -73,7 +73,7 @@ class FilterArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'filter' => [
                 'year' => '2021',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -103,7 +103,7 @@ class FilterArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'filter' => [
                 'month' => '3',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -121,12 +121,12 @@ class FilterArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'filter' => [
                 'unknown' => 'filter',
-            ]
+            ],
         ]);
 
         $this->getJson($url)->assertJsonApiError(
-            title: 'Bad Request', 
-            detail: "The filter 'unknown' is not allowed in the 'articles' resource.", 
+            title: 'Bad Request',
+            detail: "The filter 'unknown' is not allowed in the 'articles' resource.",
             status: '400'
         );
     }
@@ -142,7 +142,7 @@ class FilterArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'filter' => [
                 'categories' => 'cat-1,cat-2',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -152,5 +152,4 @@ class FilterArticlesTest extends TestCase
             ->assertSee($cat1->articles[0]->title)
             ->assertSee($cat2->articles[0]->title);
     }
-    
 }

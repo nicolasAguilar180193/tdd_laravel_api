@@ -2,17 +2,17 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\User;
 use App\Models\Article;
 use App\Models\Category;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateArticleTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     /** @test */
     public function guest_cannot_create_articles(): void
     {
@@ -41,10 +41,10 @@ class CreateArticleTest extends TestCase
             'content' => 'Some content',
             '_relationships' => [
                 'category' => $category,
-                'author' => $user
-            ]
+                'author' => $user,
+            ],
         ]);
-        
+
         $response->assertCreated();
 
         $response->assertHeader('Location', route('api.v1.articles.show', Article::first()));
@@ -62,14 +62,14 @@ class CreateArticleTest extends TestCase
                 ],
                 'links' => [
                     'self' => url(route('api.v1.articles.show', $article)),
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $this->assertDatabaseHas('articles', [
-           'title' => 'New Article',
-           'user_id' => $user->id,
-           'category_id' => $category->id
+            'title' => 'New Article',
+            'user_id' => $user->id,
+            'category_id' => $category->id,
         ]);
     }
 
@@ -80,11 +80,11 @@ class CreateArticleTest extends TestCase
 
         $this->postJson(route('api.v1.articles.store'), [
             'slug' => 'new-article',
-            'content' => 'Some content'
+            'content' => 'Some content',
         ])->assertJsonApiValidationErrors('title');
     }
 
-       /** @test */
+    /** @test */
     public function title_must_be_at_least_4_characters(): void
     {
         Sanctum::actingAs(User::factory()->create());
@@ -143,7 +143,7 @@ class CreateArticleTest extends TestCase
             'slug' => 'new_article',
             'content' => 'Some content',
         ])->assertSee(__('validation.no_underscores', [
-            'attribute' => 'data.attributes.slug'
+            'attribute' => 'data.attributes.slug',
         ]))->assertJsonApiValidationErrors('slug');
     }
 
@@ -157,10 +157,9 @@ class CreateArticleTest extends TestCase
             'slug' => '-new-article',
             'content' => 'Some content',
         ])->assertSee(__('validation.no_starting_dashes', [
-            'attribute' => 'data.attributes.slug'
+            'attribute' => 'data.attributes.slug',
         ]))->assertJsonApiValidationErrors('slug');
     }
-
 
     /** @test */
     public function slug_must_not_end_with_dashes(): void
@@ -172,7 +171,7 @@ class CreateArticleTest extends TestCase
             'slug' => 'new-article-',
             'content' => 'Some content',
         ])->assertSee(__('validation.no_ending_dashes', [
-            'attribute' => 'data.attributes.slug'
+            'attribute' => 'data.attributes.slug',
         ]))->assertJsonApiValidationErrors('slug');
     }
 
@@ -209,8 +208,8 @@ class CreateArticleTest extends TestCase
             'slug' => 'new-article',
             'content' => 'Some content',
             '_relationships' => [
-                'category' => Category::factory()->make()
-            ]
+                'category' => Category::factory()->make(),
+            ],
         ])->assertJsonApiValidationErrors('relationships.category');
     }
 }

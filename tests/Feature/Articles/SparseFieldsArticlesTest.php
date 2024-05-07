@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class SparseFieldsArticlesTest extends TestCase
 {
@@ -20,7 +19,7 @@ class SparseFieldsArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'fields' => [
                 'articles' => 'title,slug',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -28,9 +27,9 @@ class SparseFieldsArticlesTest extends TestCase
                 'title' => $article->title,
                 'slug' => $article->slug,
             ])->assertJsonMissing([
-                'content' => $article->content
+                'content' => $article->content,
             ])->assertJsonMissing([
-                'content' => null
+                'content' => null,
             ]);
     }
 
@@ -43,7 +42,7 @@ class SparseFieldsArticlesTest extends TestCase
         $url = route('api.v1.articles.index', [
             'fields' => [
                 'articles' => 'title',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -51,7 +50,7 @@ class SparseFieldsArticlesTest extends TestCase
                 'title' => $article->title,
             ])->assertJsonMissing([
                 'content' => $article->content,
-                'slug' => $article->slug
+                'slug' => $article->slug,
             ]);
     }
 
@@ -65,7 +64,7 @@ class SparseFieldsArticlesTest extends TestCase
             'article' => $article,
             'fields' => [
                 'articles' => 'title,slug',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -73,9 +72,9 @@ class SparseFieldsArticlesTest extends TestCase
                 'title' => $article->title,
                 'slug' => $article->slug,
             ])->assertJsonMissing([
-                'content' => $article->content
+                'content' => $article->content,
             ])->assertJsonMissing([
-                'content' => null
+                'content' => null,
             ]);
     }
 
@@ -89,7 +88,7 @@ class SparseFieldsArticlesTest extends TestCase
             'article' => $article,
             'fields' => [
                 'articles' => 'title',
-            ]
+            ],
         ]);
 
         $this->getJson($url)
@@ -97,7 +96,7 @@ class SparseFieldsArticlesTest extends TestCase
                 'title' => $article->title,
             ])->assertJsonMissing([
                 'content' => $article->content,
-                'slug' => $article->slug
+                'slug' => $article->slug,
             ]);
     }
 }

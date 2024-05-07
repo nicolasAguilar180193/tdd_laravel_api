@@ -2,12 +2,11 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Laravel\Sanctum\PersonalAccessToken;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use App\Models\User;
+use Laravel\Sanctum\Sanctum;
+use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RegisterTest extends TestCase
 {
@@ -55,7 +54,7 @@ class RegisterTest extends TestCase
     {
         $this->postJson(route('api.v1.register'),
             $data = $this->validCredentials([
-                'name' => ''
+                'name' => '',
             ])
         )->assertJsonValidationErrorFor('name');
     }
@@ -65,50 +64,50 @@ class RegisterTest extends TestCase
     {
         $this->postJson(route('api.v1.register'),
             $data = $this->validCredentials([
-                'email' => ''
+                'email' => '',
             ])
         )->assertJsonValidationErrorFor('email');
     }
 
     /** @test */
     public function email_must_be_a_valid_email(): void
-    {        
+    {
         $this->postJson(route('api.v1.register'),
             $data = $this->validCredentials([
-                'email' => 'invalid-email'
+                'email' => 'invalid-email',
             ])
         )->assertJsonValidationErrorFor('email');
     }
 
     /** @test */
     public function email_must_be_unique(): void
-    {     
+    {
         $user = User::factory()->create();
 
         $this->postJson(route('api.v1.register'),
             $data = $this->validCredentials([
-                'email' => $user->email
+                'email' => $user->email,
             ])
         )->assertJsonValidationErrorFor('email');
     }
 
     /** @test */
     public function password_is_required(): void
-    {     
+    {
         $this->postJson(route('api.v1.register'),
             $data = $this->validCredentials([
-                'password' => ''
+                'password' => '',
             ])
         )->assertJsonValidationErrorFor('password');
     }
 
     /** @test */
     public function password_must_be_confirmed(): void
-    {     
+    {
         $this->postJson(route('api.v1.register'),
             $data = $this->validCredentials([
                 'password' => 'password',
-                'password_confirmation' => 'not-confirmed'
+                'password_confirmation' => 'not-confirmed',
             ])
         )->assertJsonValidationErrorFor('password');
     }
@@ -118,7 +117,7 @@ class RegisterTest extends TestCase
     {
         $this->postJson(route('api.v1.register'),
             $data = $this->validCredentials([
-                'device_name' => ''
+                'device_name' => '',
             ])
         )->assertJsonValidationErrorFor('device_name');
     }
@@ -130,7 +129,7 @@ class RegisterTest extends TestCase
             'email' => 'nicolas@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-            'device_name' => 'My device'
+            'device_name' => 'My device',
         ], $overrides);
     }
 }

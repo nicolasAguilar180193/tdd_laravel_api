@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Category;
 use App\Rules\Slug as SlugRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class SaveArticleRequest extends FormRequest
 {
@@ -30,14 +29,14 @@ class SaveArticleRequest extends FormRequest
                 'required',
                 'alpha_dash',
                 new SlugRule,
-                Rule::unique('articles', 'slug')->ignore($this->route('article'))
+                Rule::unique('articles', 'slug')->ignore($this->route('article')),
             ],
             'data.attributes.content' => 'required',
             'data.relationships.category.data.id' => [
                 Rule::requiredIf(! $this->route('article')),
-                'exists:categories,slug'
+                'exists:categories,slug',
             ],
-            'data.relationships.author' => []
+            'data.relationships.author' => [],
         ];
     }
 }

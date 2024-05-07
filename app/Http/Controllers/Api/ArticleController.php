@@ -3,45 +3,46 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Article;
+use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Requests\SaveArticleRequest;
-use App\Models\Category;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-
 class ArticleController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth:sanctum')
             ->only(['store', 'update', 'destroy']);
     }
 
-    function show($article): JsonResource
+    public function show($article): JsonResource
     {
         $article = Article::where('slug', $article)
             ->allowedIncludes(['category', 'author'])
             ->sparseFields()
             ->firstOrFail();
+
         return ArticleResource::make($article);
     }
 
-    function index(): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection
     {
         $articles = Article::query()
             ->allowedIncludes(['category', 'author'])
-            ->allowedFilters(['title','content','year','month', 'categories'])
-            ->allowedSorts(['title','content'])
+            ->allowedFilters(['title', 'content', 'year', 'month', 'categories'])
+            ->allowedSorts(['title', 'content'])
             ->sparseFields()
             ->jsonPaginate();
 
         return ArticleResource::collection($articles);
     }
 
-    function store(SaveArticleRequest $request): ArticleResource
+    public function store(SaveArticleRequest $request): ArticleResource
     {
         $this->authorize('create', new Article);
 
@@ -56,25 +57,25 @@ class ArticleController extends Controller
         $articleData['category_id'] = $category->id;
 
         $article = Article::create($articleData);
-        
+
         return ArticleResource::make($article);
     }
 
-    function update(Article $article, SaveArticleRequest $request): ArticleResource
+    public function update(Article $article, SaveArticleRequest $request): ArticleResource
     {
         $this->authorize('update', $article);
 
         $articleData = $request->getAttributes();
 
-        if($request->hasRelationship('author')) {
+        if ($request->hasRelationship('author')) {
             $articleData['user_id'] = $request->getRelationshipId('author');
         }
 
-        if($request->hasRelationship('category')) {
+        if ($request->hasRelationship('category')) {
             $categorySlug = $request->getRelationshipId('category');
 
             $category = Category::whereSlug($categorySlug)->first();
-            
+
             $articleData['category_id'] = $category->id;
         }
 
@@ -83,10 +84,10 @@ class ArticleController extends Controller
         return ArticleResource::make($article);
     }
 
-    function destroy(Article $article, Request $request): Response
+    public function destroy(Article $article, Request $request): Response
     {
         $this->authorize('delete', $article);
-        
+
         $article->delete();
 
         return response()->noContent();
