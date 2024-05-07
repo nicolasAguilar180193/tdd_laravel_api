@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Assert as PHPUnit;
 use PHPUnit\Framework\ExpectationFailedException;
+use Illuminate\Testing\TestResponse;
 
 class JsonApiTestResponse
 {
@@ -121,8 +122,8 @@ class JsonApiTestResponse
 	public function assertJsonApiRelationshipsLinks() : Closure
 	{
 		return function ($model, $relations) {
-			/** @var TestResponse $this */
 			foreach($relations as $relation) {
+				/** @var TestResponse $this */
 				$this->assertJson([
 					'data' => [
 						'relationships' => [

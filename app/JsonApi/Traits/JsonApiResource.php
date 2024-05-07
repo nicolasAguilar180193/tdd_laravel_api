@@ -2,7 +2,6 @@
 
 namespace App\JsonApi\Traits;
 
-use App\Http\Resources\CategoryResource;
 use App\JsonApi\Document;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -54,7 +53,7 @@ trait JsonApiResource
     {
         $response->header(
             'Location',
-            route('api.v1.'.$this->getResourceType().'.show', $this->resource)
+            route('api.v1.'.$this->resource->getResourceType().'.show', $this->resource)
         );
     }
 
@@ -65,7 +64,7 @@ trait JsonApiResource
                 return true;
             }
 
-            $fields = explode(',', request('fields.'.$this->getResourceType()));
+            $fields = explode(',', request('fields.'.$this->resource->getResourceType()));
 
             if($value === $this->getRouteKey()) {
                 return in_array($this->getRouteKeyName(), $fields);

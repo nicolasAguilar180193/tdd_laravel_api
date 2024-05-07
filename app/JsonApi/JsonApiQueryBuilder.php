@@ -5,6 +5,7 @@ namespace App\JsonApi;
 use Closure;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Illuminate\Database\Eloquent\Builder;
 
 class JsonApiQueryBuilder
 {
@@ -38,15 +39,15 @@ class JsonApiQueryBuilder
     public function allowedFilters(): Closure
     {
         return function ($allowedFilters) {
-            /** @var Builder $this */
-            foreach(request('filter', []) as $filter => $value) {
 
+            foreach(request('filter', []) as $filter => $value) {    
                 if(! in_array($filter, $allowedFilters)) {
                     throw new BadRequestHttpException(
                         "The filter '{$filter}' is not allowed in the '{$this->getResourceType()}' resource."
                     );
                 }
                 
+                /** @var Builder $this */
                 $this->hasNamedScope($filter) 
                     ? $this->{$filter}($value)
                     : $this->where($filter, 'LIKE' , "%{$value}%");
@@ -92,7 +93,7 @@ class JsonApiQueryBuilder
 
             $fields = explode(',', request('fields.'.$this->getResourceType()));
 
-            $routeKeyName = $this->model->getRouteKeyName();
+            $routeKeyName = $this->getModel()->getRouteKeyName();
 
             if(!in_array($routeKeyName, $fields)) {
                 $fields[] = $routeKeyName;
@@ -112,8 +113,6 @@ class JsonApiQueryBuilder
                 $pageName = 'page[number]', 
                 $page = request('page.number', 1)
             )->appends(request()->only('page.size', 'sort', 'filter'));
-        
-            return $this;
         };
 	}
 
@@ -121,11 +120,11 @@ class JsonApiQueryBuilder
     {
         return function () {
             /** @var Builder $this */
-            if(property_exists($this->model, 'resourceType')) {
-                return $this->model->resourceType;
+            if(property_exists($this->getModel(), 'resourceType')) {
+                return $this->getModel()->resourceType;
             }
 
-            return $this->model->getTable();
+            return $this->getModel()->getTable();
         };
     }
 }
